@@ -47,11 +47,10 @@ class Model:
 		self.temperature = []
 		self.time = []
 
-		#Read the PTt path
 		line = pathFile.readline() #remove header
 		line = pathFile.readline()
 		while(len(line) > 0):
-			items = [value.strip() for value in line.split()]
+			items = [value.strip() for value in line.split(' ')]
 			self.temperature.append(float(items[self.TEMP_COL]))
 			self.pressure.append(float(items[self.PRES_COL]))
 			self.time.append(float(items[self.TIM_COL]))
