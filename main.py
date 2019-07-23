@@ -2,11 +2,11 @@
 #traverses measured in real samples
 
 
-import Model
+from Model import Model
 import os
-#import matplotlib.pyplot as plt
+import matplotlib.pyplot as plt
 #import numpy as np
-#import pandas as pd
+
 
 
 
@@ -19,7 +19,7 @@ fileIn = fileIn.strip('"')
 #fileOut = fileOut.strip()
 #fileOut = fileOut.strip('"')
 
-#testModel = Model.Model(fileIn, 1, 1)
+testModel = Model(fileIn, 2, 2)
 #print(testModel.trial)
 #print(testModel.gen)
 #print(testModel.temperature)
