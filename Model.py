@@ -53,7 +53,6 @@ class Model(CompoProfile):
 		self.temperature = []
 		self.time = []
 
-		#Read the PTt path
 		line = pathFile.readline() #remove header
 		line = pathFile.readline()
 		while(len(line) > 0):
@@ -61,6 +60,7 @@ class Model(CompoProfile):
 			self.temperature.append(float(items[TEMP_COL]))
 			self.pressure.append(float(items[PRES_COL]))
 			self.time.append(float(items[TIM_COL]))
+
 			line = pathFile.readline()
 
 		pathFile.close()

@@ -19,7 +19,6 @@ fileIn = fileIn.strip('"')
 #fileOut = fileOut.strip()
 #fileOut = fileOut.strip('"')
 
+
 testModel = Model(fileIn, 2, 2)
-#print(testModel.trial)
-#print(testModel.gen)
-#print(testModel.temperature)
+
