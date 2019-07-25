@@ -1,9 +1,10 @@
 #Class to open and manage an individual model
-#import csv
+#Interprets an individual trial outputted from a SUPER_TG run
+
 import os
 import numpy as np
 import pandas as pd
-from CompoProfile import CompoProfile
+from CompoProfile import CompoProfile, COMPS
 PATH_FILE_NAME = "PTt-path.txt" #File name where the PTt path is stored
 GRT_FILE_PREF = "garnet_gen" #File prefix for the modelled compositions e.g "garnet_gen001a.txt"
 TEMP_COL = 0
@@ -14,7 +15,14 @@ class Model(CompoProfile):
 
 	
 	def __init__(self,dirIn,gen,trial):
-
+		#Constructor, builds the data arrays defined in CompoProfile from the garnet_gen file
+		#Also defines the PTt path from PTt-path.txt
+		
+		CompoProfile.__init__(self)
+		#Plot parameters
+		self.pltLine = '-' 
+		self.pltColour = 'red'
+		
 		self.trial = -1 #Easy way to check if initialized
 		self.gen = -1 #to use for checking if the gen exists for this trial
 		trialDir = 'Trial-' + '{:04d}'.format(trial)
@@ -55,6 +63,8 @@ class Model(CompoProfile):
 
 		line = pathFile.readline() #remove header
 		line = pathFile.readline()
+		
+		#Read the path file to the end
 		while(len(line) > 0):
 			items = [value.strip() for value in line.split()]
 			self.temperature.append(float(items[TEMP_COL]))
@@ -65,7 +75,7 @@ class Model(CompoProfile):
 
 		pathFile.close()
 
-		CompoProfile.__init__(self)
+		
 
 
 
@@ -84,7 +94,7 @@ class Model(CompoProfile):
 
 		#Will add the values from the corresponding columns then reverse them
 		
-		self.x.append(xCol[row])
+		self.x.append(xCol[row]*10)
 		self.mn.append(mnCol[row])
 		self.fe.append(feCol[row])
 		self.mg.append(mgCol[row])
@@ -92,8 +102,10 @@ class Model(CompoProfile):
 
 		row-= 1
 
+		#loop from end of the file, counting down the shells, stops when the shell
+		#number increases again, indicating an earlier stage of growth
 		while(shells[row] < shells[row+1]):
-			self.x.append(xCol[row])
+			self.x.append(xCol[row]*10)
 			self.mn.append(mnCol[row])
 			self.fe.append(feCol[row])
 			self.mg.append(mgCol[row])
@@ -109,14 +121,5 @@ class Model(CompoProfile):
 		self.ca.reverse()
 		
 
-		#print(self.rad)
-		#print(self.mn)
-		#for row in grtdf:
+		
 
-		# self.rad
-		# self.mn
-		# self.mg
-		# self.fe
-		# self.ca
-
-	#def plot_comp
