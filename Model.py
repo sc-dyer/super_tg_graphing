@@ -1,9 +1,10 @@
 #Class to open and manage an individual model
 #Interprets an individual trial outputted from a SUPER_TG run
-
+import matplotlib.pyplot as plt
 import os
 import numpy as np
 import pandas as pd
+
 from CompoProfile import CompoProfile, COMPS
 PATH_FILE_NAME = "PTt-path.txt" #File name where the PTt path is stored
 GRT_FILE_PREF = "garnet_gen" #File prefix for the modelled compositions e.g "garnet_gen001a.txt"
@@ -81,7 +82,7 @@ class Model(CompoProfile):
 
 		#Read the garnet file, need to specifically take the last growth period, starts from the bottom and moves up
 		#Header names are identical to output files from theriag, do not change these unless you change the theriag output as well
-		grtdf = pd.read_csv(grtFile,)
+		grtdf = pd.read_csv(grtFile)
 		rowCount = grtdf.shape[0]
 		shells = grtdf['shell     ']
 		xCol = grtdf['node(cm)     ']
@@ -120,6 +121,8 @@ class Model(CompoProfile):
 		self.mg.reverse()
 		self.ca.reverse()
 		
-
+	def pltPath(self, pltIn):
+		#Funciton to plot the PT path
+		pltIn.plot(self.temperature, self.pressure, color = self.pltColour, marker = self.pltMark, linestyle = self.pltLine, markersize = 7, linewidth = 1)
 		
 
