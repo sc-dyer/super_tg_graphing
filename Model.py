@@ -5,7 +5,7 @@ import os
 import numpy as np
 import pandas as pd
 
-from CompoProfile import CompoProfile, COMPS
+from CompoProfile import CompoProfile, CMPNT
 PATH_FILE_NAME = "PTt-path.txt" #File name where the PTt path is stored
 GRT_FILE_PREF = "garnet_gen" #File prefix for the modelled compositions e.g "garnet_gen001a.txt"
 TEMP_COL = 0
@@ -26,6 +26,9 @@ class Model(CompoProfile):
 		
 		self.trial = -1 #Easy way to check if initialized
 		self.gen = -1 #to use for checking if the gen exists for this trial
+
+		#self.profPlots = []
+
 		trialDir = 'Trial-' + '{:04d}'.format(trial)
 		if os.name == 'nt':#PC
 			slash = "\\"
@@ -123,6 +126,10 @@ class Model(CompoProfile):
 		
 	def pltPath(self, pltIn):
 		#Funciton to plot the PT path
-		pltIn.plot(self.temperature, self.pressure, color = self.pltColour, marker = self.pltMark, linestyle = self.pltLine, markersize = 7, linewidth = 1)
+		self.pathPlot = pltIn #Saves the plot to the object
+		self.pathPlot.plot(self.temperature, self.pressure, color = self.pltColour, marker = self.pltMark, linestyle = self.pltLine, markersize = 7, linewidth = 1)
 		
-
+	#def plotCompo(self, key, pltIn):
+		#Adds the plot to list of plots, only expecting one per component, shoul
+		#self.profPlots.append(pltIn)
+		#CompoProfile.plotCompo(self, key, pltIn)

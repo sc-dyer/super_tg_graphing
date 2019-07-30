@@ -1,6 +1,6 @@
 #General class to be extended by the Traverse class and the Model class
 #Defines methods that can be used by any garnet composition profile
-#Possibly: include method for comparing profiles here?
+#Extended by Model and Traverse
 import matplotlib.pyplot as plt
 import os
 import numpy as np
@@ -21,11 +21,13 @@ class CompoProfile:
 		self.pltColour = 'black'
 		self.pltLine = 'None'
 		self.pltMark = 'None'
+		
 
 
-	def plotCompo(self, key, pltIn):
+	def plotCompo(self, key, pltIn,mrkSize):
 		#Plots the composition of a specific component in pltIn
 		#input key should be one of the CMPNT
+		#mrkSize input used for convenience when plotting things on different sized plots
 		
 		if key == CMPNT[0]:
 			yComp = self.mn
@@ -36,8 +38,8 @@ class CompoProfile:
 		elif key == CMPNT[3]:
 			yComp = self.fe
 			
-
-		pltIn.plot(self.x, yComp, color = self.pltColour, marker = self.pltMark, linestyle = self.pltLine, markersize = 7, linewidth = 1, label = key)
+		
+		pltIn.plot(self.x, yComp, color = self.pltColour, marker = self.pltMark, linestyle = self.pltLine, markersize = mrkSize, linewidth = 1, label = key)
 		
 	def compareProfile(self,compare,key):
 		#Comparison must be another CompoProfile object
