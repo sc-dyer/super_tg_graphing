@@ -12,7 +12,7 @@ This program requires matplotlib, easygui, and pandas to run. If you are running
 Note: I had issues running this with python 3.7 which were resolved when I installed the pillow package
 
 This program is used for analyzing data outputted by SUPER_TG and comparing it to measured garnet traverses.
-To use this program simply run main.py with python or python3 and follow the prompts. 
+To use this program simply run main.py with python3 and follow the prompts. 
 
 
 **CSV file formatting:**
