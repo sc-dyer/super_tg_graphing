@@ -9,6 +9,7 @@ import numpy as np
 import pandas as pd
 
 from CompoProfile import CompoProfile, CMPNT
+
 PATH_FILE_NAME = "PTt-path.txt" #File name where the PTt path is stored
 GRT_FILE_PREF = "garnet_gen" #File prefix for the modelled compositions e.g "garnet_gen001a.txt"
 TEMP_COL = 0
@@ -107,7 +108,7 @@ class Model(CompoProfile):
 		
 
 		for i in range(len(CMPNT)):
-			self.compnts[i].append(tgCmpnt[i][row])
+			self.cmpnts[i].append(tgCmpnt[i][row])
 		row-= 1
 
 		#loop from end of the file, counting down the shells, stops when the shell
@@ -115,14 +116,14 @@ class Model(CompoProfile):
 		while(shells[row] < shells[row+1]):
 			self.x.append(xCol[row]*10)
 			for i in range(len(CMPNT)):
-				self.compnts[i].append(tgCmpnt[i][row])
+				self.cmpnts[i].append(tgCmpnt[i][row])
 			#print(shells[row])
 			row -= 1
 
 
 		self.x.reverse()
 		for i in range(len(CMPNT)):
-			self.compnts[i].reverse()
+			self.cmpnts[i].reverse()
 		
 		
 	def pltPath(self, pltIn):

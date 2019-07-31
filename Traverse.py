@@ -30,7 +30,7 @@ class Traverse(CompoProfile):
 		grtdf = pd.read_csv(grtFile)
 		self.x = grtdf['x (mm)']
 		for i in range(len(CMPNT)):
-			self.compnts[i] = list(grtdf[CMPNT[i]])
+			self.cmpnts[i] = list(grtdf[CMPNT[i]])
 		
 
 	def plotAll(self, pltIn):
@@ -108,14 +108,14 @@ class Traverse(CompoProfile):
 			
 			self.rightTrav.x.append(self.x[i] - xPos)
 			for j in range(len(CMPNT)):
-				self.rightTrav.compnts[j].append(self.compnts[j][i])
+				self.rightTrav.cmpnts[j].append(self.cmpnts[j][i])
 			
 
 		#Flips the left Traverse
 		for i in range(xLeftIndex,-1,-1):
 			self.leftTrav.x.append(xPos - self.x[i])
 			for j in range(len(CMPNT)):
-				self.leftTrav.compnts[j].append(self.compnts[j][i])
+				self.leftTrav.cmpnts[j].append(self.cmpnts[j][i])
 	
 
 
