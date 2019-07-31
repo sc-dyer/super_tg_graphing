@@ -1,5 +1,8 @@
 #Class to open and manage an individual model
 #Interprets an individual trial outputted from a SUPER_TG run
+#Used with main to read all the trials of one model
+#Extends CompoProfile
+
 import matplotlib.pyplot as plt
 import os
 import numpy as np
@@ -79,8 +82,6 @@ class Model(CompoProfile):
 
 		pathFile.close()
 
-		
-
 
 
 		#Read the garnet file, need to specifically take the last growth period, starts from the bottom and moves up
@@ -89,44 +90,44 @@ class Model(CompoProfile):
 		rowCount = grtdf.shape[0]
 		shells = grtdf['shell     ']
 		xCol = grtdf['node(cm)     ']
-		mnCol = grtdf['x(Mn)     ']
-		feCol = grtdf['x(Fe)     ']
-		mgCol = grtdf['x(Mg)     ']
-		caCol = grtdf['x(Ca)     ']
+		#Build array of arrays in correpsonding order of CMPNT
+		tgCmpnt= []
+		for i in range(len(CMPNT)):
+			head = 'x('+CMPNT[i]+')     '
+			tgCmpnt.append(grtdf[head])
+		
+		
+		
 		row = rowCount-1
 
 
 		#Will add the values from the corresponding columns then reverse them
 		
 		self.x.append(xCol[row]*10)
-		self.mn.append(mnCol[row])
-		self.fe.append(feCol[row])
-		self.mg.append(mgCol[row])
-		self.ca.append(caCol[row])
+		
 
+		for i in range(len(CMPNT)):
+			self.compnts[i].append(tgCmpnt[i][row])
 		row-= 1
 
 		#loop from end of the file, counting down the shells, stops when the shell
 		#number increases again, indicating an earlier stage of growth
 		while(shells[row] < shells[row+1]):
 			self.x.append(xCol[row]*10)
-			self.mn.append(mnCol[row])
-			self.fe.append(feCol[row])
-			self.mg.append(mgCol[row])
-			self.ca.append(caCol[row])
+			for i in range(len(CMPNT)):
+				self.compnts[i].append(tgCmpnt[i][row])
 			#print(shells[row])
 			row -= 1
 
 
 		self.x.reverse()
-		self.mn.reverse()
-		self.fe.reverse()
-		self.mg.reverse()
-		self.ca.reverse()
+		for i in range(len(CMPNT)):
+			self.compnts[i].reverse()
+		
 		
 	def pltPath(self, pltIn):
 		#Funciton to plot the PT path
-		self.pathPlot = pltIn #Saves the plot to the object
+		self.pathPlot = pltIn #Saves the plot to the object, this is for future use?
 		self.pathPlot.plot(self.temperature, self.pressure, color = self.pltColour, marker = self.pltMark, linestyle = self.pltLine, markersize = 7, linewidth = 1)
 		
 	#def plotCompo(self, key, pltIn):

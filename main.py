@@ -3,26 +3,32 @@
 from Model import Model
 from CompoProfile import CMPNT
 from Traverse import Traverse
+
 import os
 import matplotlib.pyplot as plt
-#import numpy as np
-
-#GEN = 1
+import easygui
 
 
 
-fileIn = input('Enter the directory where the SUPER_TG trials are stored: ')
+print('Choose the directory where the SUPER_TG trials are stored')
+#fileIn = input('Enter the directory where the SUPER_TG trials are stored: ')
+fileIn = easygui.diropenbox("Choose the directory where the SUPER_TG trials are stored ")
 fileIn = fileIn.strip()
 fileIn = fileIn.strip('"')
 
-travIn = input('Enter the name and directory of the csv file for the traverse: ')
+print('Choose the csv file for the traverse')
+#travIn = input('Enter the name and directory of the csv file for the traverse: ')
+travIn = easygui.fileopenbox('Choose the csv file for the traverse')
 travIn = travIn.strip()
 travIn = travIn.strip('"')
 #fileOut = input('Enter the desired directory for the output files to be saved (WARNING: THIS WILL OVERWRITE FILES OF THE SAME NAME, SAVE TO NEW FOLDER IF YOU DONT WANT THIS TO HAPPEN): ')
 #fileOut = fileOut.strip()
 #fileOut = fileOut.strip('"')
 
-gen = int(input("Enter the garnet generation to plot: "))
+
+msg = "Enter the generation of garnet you wish to plot"
+gen = easygui.integerbox(msg)
+#gen = int(input("Enter the garnet generation to plot: "))
 
 #Make and plot the traverses
 trav = Traverse(travIn)

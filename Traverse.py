@@ -7,6 +7,7 @@ import matplotlib.pyplot as plt
 import os
 import numpy as np
 import pandas as pd
+import easygui
 
 from CompoProfile import CompoProfile, CMPNT
 
@@ -28,10 +29,9 @@ class Traverse(CompoProfile):
 		
 		grtdf = pd.read_csv(grtFile)
 		self.x = grtdf['x (mm)']
-		self.ca = grtdf['Ca']
-		self.mg = grtdf['Mg']
-		self.fe = grtdf['Fe']
-		self.mn = grtdf['Mn']
+		for i in range(len(CMPNT)):
+			self.compnts[i] = list(grtdf[CMPNT[i]])
+		
 
 	def plotAll(self, pltIn):
 		#Method to plot all components on one plot
@@ -71,8 +71,11 @@ class Traverse(CompoProfile):
 		
 		
 		a = 0
-		answer = input('Split traverse at x = ' + str(newZero) +'? (y/n)')
-		if(answer.lower() == 'y'):
+		title = ""
+		msg = "Split traverse at x = " + str(newZero) + "?"
+		answer = easygui.boolbox(msg,title,["Yes","No"])
+		#answer = input('Split traverse at x = ' + str(newZero) +'? (y/n)')
+		if answer:
 			self.splitTrav(newZero)
 			plt.draw()
 			print("Done, you may now exit this plot or choose a different x location to split the traverse.")
@@ -104,19 +107,15 @@ class Traverse(CompoProfile):
 		for i in range(xRightIndex,len(self.x)):
 			
 			self.rightTrav.x.append(self.x[i] - xPos)
-			self.rightTrav.mn.append(self.mn[i])
-			self.rightTrav.fe.append(self.fe[i])
-			self.rightTrav.ca.append(self.ca[i])
-			self.rightTrav.mg.append(self.mg[i])
+			for j in range(len(CMPNT)):
+				self.rightTrav.compnts[j].append(self.compnts[j][i])
+			
 
 		#Flips the left Traverse
 		for i in range(xLeftIndex,-1,-1):
 			self.leftTrav.x.append(xPos - self.x[i])
-			self.leftTrav.mn.append(self.mn[i])
-			self.leftTrav.fe.append(self.fe[i])
-			self.leftTrav.ca.append(self.ca[i])
-			self.leftTrav.mg.append(self.mg[i])
-		
+			for j in range(len(CMPNT)):
+				self.leftTrav.compnts[j].append(self.compnts[j][i])
 	
 
 
