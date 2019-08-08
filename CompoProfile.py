@@ -43,32 +43,59 @@ class CompoProfile:
 				val = self.cmpnts[i]
 		return val
 
-	def compareProfile(self,compare):
+	def compareProfile(self,compare,wFile, name):
 		#Comparison must be another CompoProfile object
-		#This method returns multiple r^2 values for all components or should it return average r^2
+		#This method returns multiple values of S (standard error) for each component in the form of Root Mean Squared Error, plus an average value of S. 
+		#The unit of S is mol fraction, 
 		#Assumes that these are two non-identical arrays CompoProfiles (e.g. a model and a traverse, or two different models)
-		#Also assumes that both arrays start from core and go to the rim
+		#Also assumes that both arrays start from core and go to the rims, does not perform any translations 
 		#Will take each x value of comparison and find what the composition should be at that x in "this"
-		#Does this by finding the points at the two closest x values, calculates the line between the two points and plugs in the x value of the comparison
+		#Does this by interpolating between the closest two points at each x in compare
 		#The intention is to compare a model profile to a half traverse, so it will interpolate values between points on the model for a least square regression
+
+		self.rmse= [] #Standard Error as root mean square error
+		self.nrmse = [] #Normalized RMSE
 		
 		for i in range(len(CMPNT)):
 			thisCmpnt = []
-			thatCmpnt = compare.cmpnts[i]
+			thatCmpnt = []
+			
 
 			for j in range(len(compare.x)):
-				compotAtX = self.interpCompoAtX(compare.x[j],CMPNT[i])
+				compoAtX = self.interpCompoAtX(compare.x[j],CMPNT[i])
 				if compoAtX >= 0:
 					thisCmpnt.append(compoAtX)
+					thatCmpnt.append(compare.cmpnts[i][j])
 
+			thisCmpnt = np.array(thisCmpnt)
+			thatCmpnt = np.array(thatCmpnt)
+			rmse = np.sqrt(((thisCmpnt - thatCmpnt)**2).mean()) #calculate root mean square error
+			
+			nrmse = rmse/(thatCmpnt.mean()) #Normalize to mean of the measured profile, NOTE: Can also use the range -> try both?
 
+			self.rmse.append(rmse)
+			self.nrmse.append(nrmse)
+		
+		#Build next line to write to file in order of headers from main.py
+		nextLine = name + ","
+		for i in range(len(self.rmse)):
+			nextLine += str(self.rmse[i]) + ","
+		nextLine += str(sum(self.rmse)/len(self.rmse)) + ','
 
+		for i in range(len(self.nrmse)):
+			nextLine += str(self.nrmse[i]) + ","
+		nextLine += str(sum(self.nrmse)/len(self.nrmse)) + '\n'
 
+		wFile.write(nextLine)
+
+		
+		
+			
 	def interpCompoAtX(self,xVal,key):
 		#Linearly interpolate the composition between to points on the model to get the exact value at an x position
 
 		count = 0
-		while self.x[count] < xVal and count < len(self.x):
+		while count < len(self.x) and self.x[count] < xVal:
 					count += 1
 
 		compoAtX = -1 

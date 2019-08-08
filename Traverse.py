@@ -31,12 +31,14 @@ class Traverse(CompoProfile):
 		self.x = grtdf['x (mm)']
 		for i in range(len(CMPNT)):
 			self.cmpnts[i] = list(grtdf[CMPNT[i]])
+
 		
 
 	def plotAll(self, pltIn):
 		#Method to plot all components on one plot
 		#Assumes that the Fe component is much higher than the rest, plots it on seperate axis
 		colours = ['green','blue','orange','red']
+		symbols = ['o','^','s','P']
 		pltAlm = pltIn.twinx()
 		
 		self.travPlot = pltIn #Saves the plot to the object
@@ -44,6 +46,7 @@ class Traverse(CompoProfile):
 		#Loop for plotting
 		for i in range(len(CMPNT)):
 			self.pltColour = colours[i]
+			self.pltMark = symbols[i]
 			if(CMPNT[i] == "Fe"):
 				CompoProfile.plotCompo(self,CMPNT[i],pltAlm,7)
 			else:
@@ -51,6 +54,11 @@ class Traverse(CompoProfile):
 
 		pltIn.set_xlabel("x (mm)")
 		pltIn.set_ylabel("X (Ca,Mn,Mg)")
+
+		#Uncomment these lines if you want everything on the same scale
+		#pltIn.set_ylim(0,0.4)
+		#pltAlm.set_ylim(0.45,0.85)
+
 		pltAlm.set_ylabel("X (Fe)")
 		pltIn.legend(fontsize = 14, loc = 'upper left')
 		pltAlm.legend(fontsize = 14, loc = 'upper right')
@@ -58,7 +66,7 @@ class Traverse(CompoProfile):
 		#This is to set up the stuff for splitting the plot in half, assuming that you input a full traverse instead of a half traverse
 		self.cid = pltIn.figure.canvas.mpl_connect('button_press_event',self.travClick)
 		self.splitLine = pltIn.plot([0],[0]) #create an empty line
-		self.splitTrav(-1)#Sets the baseline to leftTrav is empty and rightTrav = this. This is basically if you want to input just a half traverse, however it assumes that it is the right half
+		self.splitTrav(self.x[0] - 1)#Sets the baseline to leftTrav is empty and rightTrav = this. This is basically if you want to input just a half traverse, however it assumes that it is the right half
 
 	def travClick(self, event):
 		#When the plot is clicked, draw a vertical line where clicked and store that value as the new 0 for splitting the traverse
@@ -85,8 +93,10 @@ class Traverse(CompoProfile):
 	def splitTrav(self,xPos):
 		#Method for splitting the traverse into two halves at the inputted xPos
 		#Assumes xpos will never exactly equal to an x position on the traverse
-		#The two halves are CompoProfile objects with the same data of their respective halves of this Traverse object. 
+		#The two halves are CompoProfile objects with the same data of their respective halves of this Traverse object
+		#They will be stored in the travSplit array so that they can be ambiguously referenced. 
 		#They will contain a little less info but maintain most of the core stuff
+
 		count = 0
 		#Finds the index of the datapoint to the right of the selected x
 		while(self.x[count] < xPos):
@@ -96,26 +106,35 @@ class Traverse(CompoProfile):
 		xRightIndex = count
 
 		xLeftIndex = count - 1
-
-		self.rightTrav = CompoProfile()
-		self.leftTrav = CompoProfile()
-		self.rightTrav.pltMark = 'o'
-		self.leftTrav.pltMark = 'o'
-		self.leftTrav.pltColour = 'blue' #So it can be differentiated on the plot
+	
+		#initialize travSplit array to hold the two halves and the two sides of the traverse
+		self.travSplit= []
+		rightTrav = CompoProfile()
+		leftTrav = CompoProfile()
+		rightTrav.pltMark = 'o'
+		leftTrav.pltMark = 'o'
+		leftTrav.pltColour = 'blue' #So it can be differentiated on the plot
 
 		#Build the contained arrays
 		for i in range(xRightIndex,len(self.x)):
 			
-			self.rightTrav.x.append(self.x[i] - xPos)
+			rightTrav.x.append(self.x[i] - xPos)
 			for j in range(len(CMPNT)):
-				self.rightTrav.cmpnts[j].append(self.cmpnts[j][i])
+				rightTrav.cmpnts[j].append(self.cmpnts[j][i])
 			
 
 		#Flips the left Traverse
 		for i in range(xLeftIndex,-1,-1):
-			self.leftTrav.x.append(xPos - self.x[i])
+			leftTrav.x.append(xPos - self.x[i])
 			for j in range(len(CMPNT)):
-				self.leftTrav.cmpnts[j].append(self.cmpnts[j][i])
+				leftTrav.cmpnts[j].append(self.cmpnts[j][i])
+
+
+		#Add the two traverses to travSplit
+		if len(rightTrav.x) > 0:
+			self.travSplit.append(rightTrav)
+		if len(leftTrav.x) > 0:
+			self.travSplit.append(leftTrav)
 	
 
 
