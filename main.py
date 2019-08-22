@@ -4,6 +4,7 @@
 from Model import Model
 from CompoProfile import CMPNT
 from Traverse import Traverse
+from ModelList import ModelList
 
 import os
 import matplotlib.pyplot as plt
@@ -47,50 +48,11 @@ if fileIn != None:
 	gen = easygui.integerbox(msg)
 
 
-	#Read through the driectory and collect each trial into modelList
-	modelList = []
-	count = 1
-	currModel = Model(fileIn,gen,count)
-
-	#Continue loop until it reaches a trial number that doesnt exist
-	while(currModel.trial > 0):
-	    modelList.append(currModel)
-	    count += 1
-	    currModel = Model(fileIn,gen,count)
-	    
+	#Read through the driectory and collect each trial into ModelList
+	myModels = ModelList(fileIn, gen)
+	myModels.plotModels(trav,travSel)
 	#Build the plots
-	modelFig = plt.figure(figsize =(16,10))
-	sbplot = 221 #location for first subplot
-	for i in range(len(CMPNT)):
-	    #Cycle through each component and graph the model output for each trial
-	    compoAx = modelFig.add_subplot(sbplot)
-	    
-	    for j in range(len(modelList)):
-	        modelList[j].plotCompo(CMPNT[i],compoAx,0)
-	        
-	    #Overlay the right and left halves of the traverse
-	    if travSel:
-	    	tSplit = trav.travSplit
-	    	for j in range(len(tSplit)):
-	    		tSplit[j].plotCompo(CMPNT[i],compoAx,3)
-	    		
-		    
-
-	    compoAx.set_xlabel("x (mm)")
-	    compoAx.set_ylabel("X (" + CMPNT[i] + ")")
-	    sbplot += 1
-
-	#Display the PT paths
-	pathFig = plt.figure(figsize = (12,8))
-	pathAx = pathFig.add_subplot()
-
-	for i in range(len(modelList)):
-		modelList[i].pltPath(pathAx)
-
-	pathAx.set_xlabel("T (deg C)")
-	pathAx.set_ylabel("P (bar)")
-
-	plt.show()
+	
 
 	#Output the mean squared error stuff
 	if travSel:
@@ -116,17 +78,28 @@ if fileIn != None:
 			writeFile.write(header)
 
 			#Compare the model to each half of the traverse for each model
-			for i in range(len(modelList)):
+			for i in range(len(myModels.models)):
 				rowName = "Trial-" + str(i+1) +" (Right Half)"
-				modelList[i].compareProfile(trav.travSplit[0],writeFile,rowName)
+				rightMatch = myModels.models[i].compareProfile(trav.travSplit[0],writeFile,rowName)
 
 				if len(trav.travSplit) > 1:
 					rowName = "Trial-" + str(i+1) + " (Left Half)"
-					modelList[i].compareProfile(trav.travSplit[1],writeFile,rowName)
+					leftMatch = myModels.models[i].compareProfile(trav.travSplit[1],writeFile,rowName)
+				else:
+					leftMatch = float("inf") #So it doesnt meet conditional
+
+				#Display the plots as green if they are good fits
+				if rightMatch <= 0.1 or leftMatch <= 0.1:
+					myModels.models[i].pltColour = 'green'
+
 
 			writeFile.close()
+
+			myModels.plotModels(trav,travSel)
 
 		else:
 			print("No output path chosen, ending program")
 else:
 	print('No model path chosen, ending program')
+
+

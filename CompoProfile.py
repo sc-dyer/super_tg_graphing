@@ -76,7 +76,7 @@ class CompoProfile:
 			self.rmse.append(rmse)
 			self.nrmse.append(nrmse)
 		
-		#Build next line to write to file in order of headers from main.py
+		#Build next line to write to file in the order of RMSE(CMPNT1),RMSE(CMPNT2)...,RMSE(Average),NRMSE(CMPNT1),NRMSE(CMPNT2)..NRMSE(Average)
 		nextLine = name + ","
 		for i in range(len(self.rmse)):
 			nextLine += str(self.rmse[i]) + ","
@@ -84,11 +84,14 @@ class CompoProfile:
 
 		for i in range(len(self.nrmse)):
 			nextLine += str(self.nrmse[i]) + ","
-		nextLine += str(sum(self.nrmse)/len(self.nrmse)) + '\n'
+		nrmseAvg = sum(self.nrmse)/len(self.nrmse)
+		nextLine += str(nrmseAvg) + '\n'
+
+		
 
 		wFile.write(nextLine)
 
-		
+		return nrmseAvg
 		
 			
 	def interpCompoAtX(self,xVal,key):
