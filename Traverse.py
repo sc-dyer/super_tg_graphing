@@ -28,7 +28,7 @@ class Traverse(CompoProfile):
 			return
 		
 		grtdf = pd.read_csv(grtFile)
-		self.x = grtdf['x (mm)']
+		self.x = list(grtdf['x (mm)'])
 		for i in range(len(CMPNT)):
 			self.cmpnts[i] = list(grtdf[CMPNT[i]])
 
@@ -78,7 +78,6 @@ class Traverse(CompoProfile):
 		self.splitLine = self.travPlot.plot([newZero,newZero],[-100,100],color = 'black',linestyle = '--')
 		
 		
-		a = 0
 		title = ""
 		msg = "Split traverse at x = " + str(newZero) + "?"
 		answer = easygui.boolbox(msg,title,["Yes","No"])
