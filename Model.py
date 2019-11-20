@@ -15,6 +15,7 @@ GRT_FILE_PREF = "garnet_gen" #File prefix for the modelled compositions e.g "gar
 TEMP_COL = 0
 PRES_COL = 1
 TIM_COL = 2
+H_ADJUST = 0 #Horizontal adjustment for X
 
 class Model(CompoProfile):
 
@@ -104,7 +105,7 @@ class Model(CompoProfile):
 
 		#Will add the values from the corresponding columns then reverse them
 		
-		self.x.append(xCol[row]*10)
+		self.x.append(xCol[row]*10-H_ADJUST)
 		
 
 		for i in range(len(CMPNT)):
@@ -114,7 +115,7 @@ class Model(CompoProfile):
 		#loop from end of the file, counting down the shells, stops when the shell
 		#number increases again, indicating an earlier stage of growth
 		while(shells[row] < shells[row+1]):
-			self.x.append(xCol[row]*10)
+			self.x.append(xCol[row]*10-H_ADJUST)
 			for i in range(len(CMPNT)):
 				self.cmpnts[i].append(tgCmpnt[i][row])
 			#print(shells[row])
